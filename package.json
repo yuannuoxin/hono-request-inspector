@@ -1,0 +1,28 @@
+{
+  "name": "hono-request-inspector",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "用 Hono 解析 User-Agent / Client Hints / 全部请求头 / FingerprintJS v5 的请求特征查看器",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "hono",
+    "user-agent",
+    "client-hints",
+    "fingerprintjs"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@fingerprintjs/fingerprintjs": "^5.3.0",
+    "@hono/node-server": "^2.1.6",
+    "hono": "^4.13.16",
+    "ua-parser-js": "^2.0.10"
+  }
+}
