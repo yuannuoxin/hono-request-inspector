@@ -7,7 +7,14 @@
   "main": "src/server.js",
   "scripts": {
     "dev": "node --watch src/server.js",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "smoke": "node scripts/smoke.mjs",
+    "check:vercel": "node scripts/vercel-check.mjs",
+    "dev:cf": "wrangler dev",
+    "deploy:cf": "wrangler deploy",
+    "deploy:pages": "wrangler pages deploy public --project-name=hono-request-inspector",
+    "dev:vercel": "vercel dev",
+    "deploy:vercel": "vercel --prod"
   },
   "engines": {
     "node": ">=20"
@@ -16,13 +23,18 @@
     "hono",
     "user-agent",
     "client-hints",
-    "fingerprintjs"
+    "fingerprintjs",
+    "cloudflare-workers",
+    "vercel"
   ],
   "license": "MIT",
   "dependencies": {
-    "@fingerprintjs/fingerprintjs": "^5.3.0",
     "@hono/node-server": "^2.1.6",
     "hono": "^4.13.16",
     "ua-parser-js": "^2.0.10"
+  },
+  "devDependencies": {
+    "@fingerprintjs/fingerprintjs": "^5.3.0",
+    "wrangler": "^4.158.0"
   }
 }

@@ -2,3 +2,10 @@ node_modules/
 *.log
 preview-*.png
 .preview-*.png
+
+# Cloudflare
+.wrangler/
+.cf-build/
+
+# Vercel
+.vercel/

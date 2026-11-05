@@ -1,6 +1,6 @@
 // 总览页
 import { card, layout } from './layout.js';
-import { headerPairs, remoteAddress, httpVersion, getHeader } from '../lib/util.js';
+import { headerPairs, remoteAddress, httpVersion, getHeader, runtimeLabel } from '../lib/util.js';
 import { readUserAgent } from '../lib/ua.js';
 import { readHints } from '../lib/hints.js';
 
@@ -45,6 +45,7 @@ export function overviewView(c) {
     note: '这一屏的内容全部来自你当前这次真实请求，没有 mock 数据。',
     body: `<table class="kv"><tbody>
   <tr><th scope="row">请求行</th><td class="mono">${c.req.method} ${c.req.path} · HTTP/${httpVersion(c) || '1.1'}</td></tr>
+  <tr><th scope="row">运行时</th><td>${runtimeLabel(c)}<span class="mono" style="color:var(--dim);margin-left:8px">${remoteAddress(c)}</span></td></tr>
   <tr><th scope="row">User-Agent</th><td><span class="mono">${ua.raw ? ua.raw.slice(0, 160) + (ua.raw.length > 160 ? '…' : '') : '（未发送）'}</span></td></tr>
   <tr><th scope="row">已收到提示</th><td>${present} / ${hints.length} 个已知 Client Hints</td></tr>
   <tr><th scope="row">Accept</th><td class="mono">${getHeader(c, 'accept') || '（未发送）'}</td></tr>
@@ -57,7 +58,7 @@ export function overviewView(c) {
     title: '请求特征总览',
     subtitle: '一个用 Hono 写的、把 HTTP 请求里能看到的身份信号逐层拆开的小工具：UA、Client Hints、原始请求头、浏览器指纹。',
     active: '/',
-    badge: `HTTP/${httpVersion(c) || '1.1'}`,
+    badge: `${runtimeLabel(c)} · HTTP/${httpVersion(c) || '1.1'}`,
     body,
   });
 }

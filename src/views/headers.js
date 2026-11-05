@@ -1,6 +1,6 @@
 // 请求头全量页
 import { card, codeBlock, layout, pill } from './layout.js';
-import { bytesOf, esc, headerPairs, httpVersion, remoteAddress, prettyJson } from '../lib/util.js';
+import { bytesOf, esc, headerPairs, httpVersion, remoteAddress, prettyJson, runtimeLabel } from '../lib/util.js';
 
 const GROUP_RULES = [
   { id: 'all', label: '全部', test: () => true },
@@ -86,7 +86,7 @@ export function headersView(c) {
     title: '请求头全量',
     subtitle: '把这次请求的每一个 HTTP 头都摊开：原始名称、原始值、分组、体积，以及它和浏览器内部 fetch 请求的差异。',
     active: '/headers',
-    badge: `${pairs.length} headers`,
+    badge: `${pairs.length} headers · ${runtimeLabel(c)}`,
     body: `${stats}${listCard}${diffCard}${jsonCard}
 <script type="application/json" id="nav-headers-data">${navJson}</script>`,
     scripts: ['/static/common.js', '/static/headers.js'],

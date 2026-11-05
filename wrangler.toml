@@ -1,0 +1,16 @@
+# Cloudflare Workers 部署配置
+#   npx wrangler dev     本地跑（等价于线上环境）
+#   npx wrangler deploy  发布
+
+name = "hono-request-inspector"
+main = "src/worker.js"
+compatibility_date = "2025-10-01"
+
+# 静态资源：public/ 下的文件会作为 Assets 一起上传，
+# 命中的请求由 Cloudflare 直接返回，不进 Worker。
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+[observability]
+enabled = true
