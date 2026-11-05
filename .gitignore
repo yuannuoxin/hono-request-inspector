@@ -9,3 +9,4 @@ preview-*.png
 
 # Vercel
 .vercel/
+/.idea/

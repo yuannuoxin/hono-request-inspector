@@ -5,7 +5,7 @@ import { Hono } from 'hono';
 import { logger } from 'hono/logger';
 
 import { REQUEST_HINTS } from './lib/hints.js';
-import { headerPairs, httpVersion, remoteAddress, getHeader } from './lib/util.js';
+import { headerPairs, httpVersion, remoteAddress, getHeader, esc } from './lib/util.js';
 import { overviewView } from './views/overview.js';
 import { uaView } from './views/ua.js';
 import { hintsView } from './views/hints.js';
@@ -138,6 +138,27 @@ export function createApp(options = {}) {
   }
 
   app.notFound((c) => c.text('404 Not Found', 404));
+
+  // 兜底：任何未捕获异常都打印到平台日志，并返回可读的 500 页面，
+  // 而不是让 Vercel / Cloudflare 用它们自己的空白错误页盖掉原因。
+  app.onError((err, c) => {
+    const message = (err && err.message) || String(err);
+    console.error('[500]', c.req.method, c.req.path, '::', message);
+    console.error(err && err.stack ? err.stack : err);
+    if ((c.req.header('accept') || '').includes('application/json')) {
+      return c.json({ ok: false, error: message }, 500);
+    }
+    return c.html(
+      `<!doctype html><meta charset="utf-8"><title>500</title>
+<body style="font:14px/1.6 ui-monospace,monospace;padding:2rem;background:#14161a;color:#e6e8ee">
+<h1 style="color:#ff6b6b">500 Internal Error</h1>
+<p>路径：<b>${esc(c.req.path)}</b></p>
+<p>原因：<b>${esc(message)}</b></p>
+<p style="color:#8b93a7">完整堆栈已写入运行时日志。</p>
+</body>`,
+      500,
+    );
+  });
 
   return app;
 }
