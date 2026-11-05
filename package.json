@@ -4,10 +4,9 @@
   "private": true,
   "type": "module",
   "description": "用 Hono 解析 User-Agent / Client Hints / 全部请求头 / FingerprintJS v5 的请求特征查看器",
-  "main": "src/server.js",
   "scripts": {
-    "dev": "node --watch src/server.js",
-    "start": "node src/server.js",
+    "dev": "node --watch src/main-node.js",
+    "start": "node src/main-node.js",
     "smoke": "node scripts/smoke.mjs",
     "check:vercel": "node scripts/vercel-check.mjs",
     "dev:cf": "wrangler dev",

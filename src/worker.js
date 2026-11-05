@@ -1,6 +1,6 @@
 // Cloudflare Workers 入口
 // 静态资源走 Workers Static Assets（wrangler.toml 里的 [assets] binding）
-import { createApp } from './app.js';
+import { createApp } from './core.js';
 
 const app = createApp({
   mountStatic: (app) =>

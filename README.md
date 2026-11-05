@@ -68,7 +68,7 @@ binding = "ASSETS"
 
 如果构建环境的 Node 低于 20（`package.json` 的 `engines.node` 要求 `>=20`），在环境变量里加 `NODE_VERSION=20`。
 
-`functions/` 会被自动识别并打包，跨目录 import（`../src/app.js`）是支持的。日志里那句 `A Wrangler configuration file was found but it does not appear to be valid` 属于预期提示——`wrangler.toml` 是 Workers 的配置，Pages 的构建参数在 Dashboard 里，两者互不干扰。
+`functions/` 会被自动识别并打包，跨目录 import（`../src/core.js`）是支持的。日志里那句 `A Wrangler configuration file was found but it does not appear to be valid` 属于预期提示——`wrangler.toml` 是 Workers 的配置，Pages 的构建参数在 Dashboard 里，两者互不干扰。
 
 **B. 命令行**
 
@@ -97,12 +97,26 @@ npm run dev:vercel      # = vercel dev
 npm run check:vercel    # 用纯 Node http 直接跑 api/index.js
 ```
 
+**为什么根路径 `/` 会 500？**
+
+Vercel 的 Node runtime 在 `api/` 没命中时会按约定去探测 `index.js`、`server.js`、`app.js` 这类"服务入口"。如果 `src/` 下存在 `app.js` 而它只有命名导出（`export function createApp`），Vercel 会把它当成 `/` 的入口，运行时日志报：
+
+```
+Invalid export found in module "/var/task/src/app.js".
+The default export must be a function or server.
+Node.js process exited with exit status: 1.
+```
+
+外部表现就是 `500 FUNCTION_INVOCATION_FAILED`，而 `/ua`、`/headers` 这些走 rewrite 到 `/api` 的路径完全正常——故障面因此很奇怪。
+
+结论：平台无关的工厂文件不要叫 `app.js` / `server.js`。本项目用 `src/core.js` 与 `src/main-node.js`，`package.json` 也不写 `main`。
+
 ## 目录结构
 
 ```
 src/
-  app.js                 平台无关的 Hono 应用（路由 / 中间件 / API）
-  server.js              Node 入口：@hono/node-server + serveStatic
+  core.js                平台无关的 Hono 应用（路由 / 中间件 / API）
+  main-node.js           Node 入口：@hono/node-server + serveStatic
   worker.js              Cloudflare Workers 入口：ASSETS binding
   lib/
     util.js              转义、请求头读取、远端地址、运行时识别
@@ -147,7 +161,7 @@ scripts/
 
 **1. 高熵 Client Hints 靠响应头协商**
 
-`src/app.js` 的中间件在每个响应里写：
+`src/core.js` 的中间件在每个响应里写：
 
 ```js
 c.header('Accept-CH', CH_LIST)    // 下一次请求带哪些高熵提示
@@ -167,7 +181,7 @@ URL `/static/styles.css` 在三端都直接对应 `public/static/styles.css`：N
 
 **4. Node 专属的东西只在入口出现**
 
-`app.js` 不 import `@hono/node-server`、不读 `process.env`，所以能被 Workers 直接打包。平台差异通过 `createApp({ mountStatic })` 注入。
+`core.js` 不 import `@hono/node-server`、不读 `process.env`，所以能被 Workers 直接打包。平台差异通过 `createApp({ mountStatic })` 注入。
 
 **5. FingerprintJS 用本地包**
 

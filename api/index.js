@@ -3,7 +3,7 @@
 // 这样 c.env.incoming 依然存在，请求头也能保留原始大小写。
 // public/ 由 Vercel 自己作为静态资源提供，所以不注册 mountStatic。
 import { getRequestListener } from '@hono/node-server';
-import { createApp } from '../src/app.js';
+import { createApp } from '../src/core.js';
 
 const app = createApp();
 const listener = getRequestListener(app.fetch);

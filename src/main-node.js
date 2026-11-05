@@ -1,7 +1,7 @@
 // Node.js 入口：npm run dev / npm start
 import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
-import { createApp } from './app.js';
+import { createApp } from './core.js';
 
 const app = createApp({
   // 本地文件服务：URL /static/styles.css -> ./public/static/styles.css
