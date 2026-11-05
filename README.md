@@ -99,17 +99,25 @@ npm run check:vercel    # 用纯 Node http 直接跑 api/index.js
 
 **为什么根路径 `/` 会 500？**
 
-Vercel 的 Node runtime 在 `api/` 没命中时会按约定去探测 `index.js`、`server.js`、`app.js` 这类"服务入口"。如果 `src/` 下存在 `app.js` 而它只有命名导出（`export function createApp`），Vercel 会把它当成 `/` 的入口，运行时日志报：
+Vercel 的 Node runtime 会按约定探测服务入口，搜索顺序是：
 
 ```
-Invalid export found in module "/var/task/src/app.js".
-The default export must be a function or server.
-Node.js process exited with exit status: 1.
+app.{js,cjs,mjs,ts,cts,mts}
+index.{js,cjs,mjs,ts,cts,mts}
+server.{js,cjs,mjs,ts,cts,mts}
+src/app.{js,cjs,mjs,ts,cts,mts}
+src/index.{js,cjs,mjs,ts,cts,mts}
+src/server.{js,cjs,mjs,ts,cts,mts}
 ```
 
-外部表现就是 `500 FUNCTION_INVOCATION_FAILED`，而 `/ua`、`/headers` 这些走 rewrite 到 `/api` 的路径完全正常——故障面因此很奇怪。
+**根路径 `/` 交给这个入口，其余路径才走 `vercel.json` 的 rewrite 到 `/api`。** 所以：
 
-结论：平台无关的工厂文件不要叫 `app.js` / `server.js`。本项目用 `src/core.js` 与 `src/main-node.js`，`package.json` 也不写 `main`。
+- 探测到 `src/app.js` 但它只有命名导出（`export function createApp`）→ 运行时日志报 `Invalid export found in module ... The default export must be a function or server`，进程退出 1，外部表现为 `500 FUNCTION_INVOCATION_FAILED`，而 `/ua`、`/headers` 全部正常。
+- 干脆改名躲开探测 → 构建直接失败 `Error: No entrypoint found.`。
+
+正确的做法是**提供这个入口并让它合法**：本项目 `src/app.js` 的 default export 就是一个 `getRequestListener(createApp().fetch)`，`core.js` 里的工厂保持平台无关。
+
+另外注意：**Vercel 项目如果只通过 CLI 部署，push 到 GitHub 不会触发重新部署**，改完要自己 `npm run deploy:vercel` 或到 Dashboard 点 Redeploy。
 
 ## 目录结构
 
@@ -117,6 +125,7 @@ Node.js process exited with exit status: 1.
 src/
   core.js                平台无关的 Hono 应用（路由 / 中间件 / API）
   main-node.js           Node 入口：@hono/node-server + serveStatic
+  app.js                 Vercel 专用入口（满足 Vercel 对 Node 服务入口的探测）
   worker.js              Cloudflare Workers 入口：ASSETS binding
   lib/
     util.js              转义、请求头读取、远端地址、运行时识别
