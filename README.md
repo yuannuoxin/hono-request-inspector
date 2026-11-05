@@ -57,10 +57,18 @@ binding = "ASSETS"
 两种方式，二选一：
 
 **A. 连 Git 仓库**（推荐，推代码即部署）
-- 构建命令：留空
-- 构建输出目录：`public`
-- 框架预设：None
-- `functions/` 目录会被自动识别并打包，无需额外配置
+
+| 设置项 | 值 |
+|---|---|
+| 框架预设 | None |
+| 构建命令 | `npm ci` |
+| 构建输出目录 | `public` |
+
+**构建命令不能留空。** Pages 只有在执行构建命令时才会安装依赖；留空就会跳过构建直接去打包 `functions/`，那时没有 `node_modules`，报 `Could not resolve "hono"` / `Could not resolve "ua-parser-js"` 并失败。
+
+如果构建环境的 Node 低于 20（`package.json` 的 `engines.node` 要求 `>=20`），在环境变量里加 `NODE_VERSION=20`。
+
+`functions/` 会被自动识别并打包，跨目录 import（`../src/app.js`）是支持的。日志里那句 `A Wrangler configuration file was found but it does not appear to be valid` 属于预期提示——`wrangler.toml` 是 Workers 的配置，Pages 的构建参数在 Dashboard 里，两者互不干扰。
 
 **B. 命令行**
 
@@ -166,6 +174,9 @@ URL `/static/styles.css` 在三端都直接对应 `public/static/styles.css`：N
 `fp.min.js` 来自 npm 包而非 CDN，离线可用、版本可控。开源版 `FingerprintJS.load()` 不需要 API Key。注意 v5 的 `confidence.comment` 里带 Pro 版推广链接和 `utm_` 参数，页面里已过滤成中性文案。
 
 ## 常见问题
+
+**Pages 构建报 `Could not resolve "hono"`？**
+构建命令留空了，Pages 没装依赖。Settings → Build & deployments 里把构建命令设成 `npm ci`、输出目录 `public`，保存后 Retry deployment。
 
 **高熵提示全是空的？**
 - 只有 Chromium 系浏览器支持（Firefox 基本不支持，Safari 支持一部分）。
