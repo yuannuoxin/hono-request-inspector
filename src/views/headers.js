@@ -31,7 +31,7 @@ export function headersView(c) {
       `<button class="btn filter-btn${i === 0 ? ' is-on' : ''}" type="button" data-filter="${g.id}">${esc(g.label)}</button>`,
   ).join('');
 
-  const table = `<table class="data" id="headers-table">
+  const table = `<table class="data t-headers" id="headers-table">
   <thead><tr><th style="width:44px">#</th><th style="width:260px">请求头</th><th>值</th></tr></thead>
   <tbody>
   ${pairs

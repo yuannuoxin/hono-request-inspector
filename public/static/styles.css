@@ -446,10 +446,213 @@ table.data tbody tr:hover { background: rgba(52, 211, 192, 0.03); }
   border-top: 1px solid var(--line);
 }
 
+/* ---------- 移动端 ---------- */
 @media (max-width: 720px) {
-  .wrap { padding: 24px 16px 48px; }
-  h1 { font-size: 21px; }
-  .kv th { width: 130px; }
-  .fp-id { font-size: 24px; }
+  /* 顶栏：品牌让位，导航排成 3×2 全部可见，避免横滑藏入口 */
+  .topbar-inner {
+    flex-wrap: nowrap;
+    gap: 0;
+    padding: 9px 14px;
+  }
+  .brand { display: none; }
+
+  .nav {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    width: 100%;
+    flex-wrap: nowrap;
+    overflow: visible;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-item {
+    flex: 0 0 auto;
+    text-align: center;
+    padding: 7px 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .wrap { padding: 18px 14px 40px; }
+
+  .page-head {
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-size: 20px;
+    letter-spacing: -0.3px;
+  }
+  .subtitle {
+    margin-top: 6px;
+    font-size: 12.5px;
+    line-height: 1.55;
+  }
+  .badge {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+
+  .card {
+    padding: 14px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+  }
+  .card-head { gap: 8px; margin-bottom: 10px; }
+  .card h2 { font-size: 14px; }
+  .card-note { font-size: 12px; }
+
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .stat { padding: 10px 12px; }
+  .stat-label { font-size: 10.5px; letter-spacing: 0.5px; }
+  .stat-value { font-size: 13.5px; }
+
+  .grid { grid-template-columns: 1fr; gap: 10px; }
+  .link-card { padding: 14px 16px; }
+
+  /* ---- 数据表：每行变成一张小卡，不再横向挤压 ---- */
   table.data { font-size: 12px; }
+  table.data thead { display: none; }
+  table.data,
+  table.data tbody,
+  table.data tr,
+  table.data td {
+    display: block;
+    width: auto;
+  }
+  table.data tr {
+    padding: 11px 0 12px;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  table.data tr:last-child { border-bottom: none; }
+  table.data td {
+    border: 0;
+    padding: 1px 0;
+    word-break: break-word;
+  }
+  table.data td:first-child {
+    font-size: 12.5px;
+    margin-bottom: 3px;
+  }
+  table.data td:not(:first-child) {
+    margin: 3px 0 3px 1px;
+    padding-left: 9px;
+    border-left: 2px solid var(--line-strong);
+  }
+  table.data td.key-cell { white-space: normal; }
+  table.data td.empty {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  /* 请求头表：序号列在手机上没意义，直接藏掉 */
+  .t-headers td:first-child { display: none; }
+
+  /* 列的语义靠前缀补回来（只在手机上出现） */
+  .t-hints td:nth-child(2)::before,
+  .t-brands td:nth-child(2)::before,
+  #fp-components td:nth-child(2)::before,
+  #fp-server table td:nth-child(2)::before,
+  #js-hints table td:nth-child(2)::before {
+    content: "取值：";
+    color: var(--dim);
+    font-size: 11px;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  .t-hints td:nth-child(2)::before { content: "状态："; }
+  .t-hints td:nth-child(3)::before { content: "原始值："; }
+  .t-hints td:nth-child(4)::before { content: "解析："; }
+  .t-brands td:nth-child(2)::before { content: "版本："; }
+  .t-brands td:nth-child(3)::before {
+    content: "类型：";
+    color: var(--dim);
+    font-size: 11px;
+  }
+  #fp-components td:nth-child(3)::before { content: "耗时："; }
+  #fp-server table td:nth-child(3)::before {
+    content: "这一次：";
+    color: var(--dim);
+    font-size: 11px;
+  }
+  #fp-server table td:nth-child(2)::before { content: "上一次："; }
+
+  /* ---- 键值表同样堆叠 ---- */
+  .kv tr { display: block; padding: 9px 0; }
+  .kv th {
+    display: block;
+    width: auto;
+    white-space: normal;
+    padding: 0 0 2px;
+    font-size: 12.5px;
+  }
+  .kv td {
+    display: block;
+    padding: 0;
+    font-size: 13px;
+  }
+
+  /* ---- 表单：输入框占满一行，字号 16px 避免 iOS 聚焦缩放 ---- */
+  .input {
+    min-width: 0;
+    width: 100%;
+    font-size: 16px;
+    padding: 9px 12px;
+  }
+  .btn { padding: 8px 12px; font-size: 12.5px; }
+  .toolbar { gap: 8px; }
+  .btn-row { gap: 6px; }
+
+  /* 复制按钮不再绝对定位压住折行后的正文，挪到代码块下方 */
+  .code-wrap {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .code {
+    padding: 13px;
+    font-size: 12px;
+  }
+  .copy {
+    position: static;
+    align-self: flex-end;
+  }
+
+  .fp-hero { gap: 16px; }
+  .fp-hero > div:first-child { flex: 1 1 100%; }
+  .fp-hero > div:last-child { flex: 1 1 100%; }
+  .fp-id {
+    font-size: 19px;
+    letter-spacing: 0.5px;
+  }
+  .conf-bar {
+    width: 100%;
+    max-width: 260px;
+  }
+
+  .note {
+    padding: 10px 12px;
+    font-size: 12.5px;
+  }
+  .note li { font-size: 12.5px; }
+
+  .footer {
+    padding: 16px 14px 32px;
+    font-size: 11.5px;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 420px) {
+  h1 { font-size: 18px; }
+  .fp-id { font-size: 17px; }
+  .stat { padding: 9px 10px; }
+  .stat-value { font-size: 13px; }
 }

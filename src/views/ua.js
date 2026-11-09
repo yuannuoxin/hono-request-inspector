@@ -112,7 +112,7 @@ export function uaView(c) {
     ? card({
         title: 'Client Hints 交叉验证',
         note: 'Sec-CH-UA 的品牌列表 —— 与 UA 串对照着看，能立刻发现 UA 串里缺失的真实版本。',
-        body: `<table class="data"><thead><tr><th>品牌</th><th>版本</th><th>类型</th></tr></thead><tbody>
+        body: `<table class="data t-brands"><thead><tr><th>品牌</th><th>版本</th><th>类型</th></tr></thead><tbody>
       ${brands
         .map(
           (b) => `<tr><td class="value-cell">${b.brand}</td><td class="value-cell">${b.version}</td><td>${

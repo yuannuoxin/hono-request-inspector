@@ -5,7 +5,7 @@ import { REQUEST_HINTS, readHints } from '../lib/hints.js';
 
 function hintTable(items) {
   if (!items.length) return '<p class="empty">没有条目。</p>';
-  return `<table class="data">
+  return `<table class="data t-hints">
   <thead><tr><th>请求头</th><th>状态</th><th>原始值</th><th>解析结果</th></tr></thead>
   <tbody>
   ${items
